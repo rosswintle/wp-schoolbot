@@ -41,7 +41,7 @@ function schoolbot_menus( $atts ) {
 
 	$menus = json_decode($menus['body'], true);
 
-	$output = "";
+	$output = '<h3>Menus</h3>';
 	foreach ( $menus as $weekno => $weekdata ) {
 		$output .= "<h3>Week " . esc_html($weekno) . "</h3>";
 		foreach ( $weekdata as $dayno => $daydata ) {
@@ -53,6 +53,40 @@ function schoolbot_menus( $atts ) {
 			$output .= "</ul>";
 		}
 	}
+
+	return $output;
+
+}
+
+add_shortcode( 'schoolbot-menus-table', 'schoolbot_menus_table' );
+
+function schoolbot_menus_table( $atts ) {
+	$atts = shortcode_atts( [], $atts, 'schoolbot-menus' );
+
+	$menus = wp_remote_get( SCHOOLBOT_URL . '/api/v1/menus' );
+
+	if (is_wp_error( $menus )) {
+		return "Error fetching menus";
+	}
+
+	$menus = json_decode($menus['body'], true);
+
+	$output = '<h3>Menus</h3>';
+	$output .= '<table></tbody>';
+	foreach ( $menus as $weekno => $weekdata ) {
+		$output .= '<tr><td class="menu-table-week-heading" colspan="5"><strong>Week ' . esc_html($weekno) . '</strong></td></tr>';
+		$output .= '<tr class="menu-table-day-headings"><td>Monday</td><td>Tuesday</td><td>Wednesday</td><td>Thursday</td><td>Friday</td></tr>';
+		$output .= '<tr class="menu-table-week">';
+		foreach ( $weekdata as $dayno => $daydata ) {
+			$output .= '<td class="menu-table-day"><ul>';
+			foreach ( $daydata as $order => $meal ) {
+				$output .= "<li>" . esc_html($meal['meal']) . "</li>";
+			}
+			$output .= "</ul></td>";
+		}
+		$output .= '</tr>';
+	}
+	$output .= '</tbody></table>';
 
 	return $output;
 
