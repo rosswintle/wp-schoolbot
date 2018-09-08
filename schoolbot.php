@@ -58,6 +58,33 @@ function schoolbot_menus( $atts ) {
 
 }
 
+add_shortcode( 'schoolbot-todays-meals', 'schoolbot_todays_meals' );
+
+function schoolbot_todays_meals( $atts ) {
+	$atts = shortcode_atts( [], $atts, 'schoolbot-todays-meals' );
+
+	$todays_meals = wp_remote_get( SCHOOLBOT_URL . '/api/v1/meals/today' );
+
+	if (is_wp_error( $todays_meals )) {
+		return "Error fetching todays meals";
+	}
+
+	$todays_meals = json_decode($todays_meals['body'], true);
+
+	$output = "<h3>Todays Meals</h3><ul>";
+	if (empty($todays_meals)) {
+		$output .= 'There are no meals listed for today';
+	}
+	foreach ( $todays_meals as $meal ) {
+		$output .= '<li>' . $meal['meal'] . '</li>';
+	}
+	$output .= "</ul>";
+
+	return $output;
+
+}
+
+
 add_shortcode( 'schoolbot-holidays', 'schoolbot_holidays' );
 
 function schoolbot_holidays( $atts ) {
@@ -104,6 +131,8 @@ function schoolbot_terms( $atts ) {
 
 }
 
+add_shortcode( 'schoolbot-training-days', 'schoolbot_training_days' );
+
 function schoolbot_training_days( $atts ) {
 	$atts = shortcode_atts( [], $atts, 'schoolbot-training-days' );
 
@@ -125,7 +154,8 @@ function schoolbot_training_days( $atts ) {
 
 }
 
-add_shortcode( 'schoolbot-training-days', 'schoolbot_training_days' );
+
+add_shortcode( 'schoolbot-faq', 'schoolbot_faq' );
 
 function schoolbot_faq( $atts ) {
 	$atts = shortcode_atts( [], $atts, 'schoolbot-faq' );
@@ -150,7 +180,5 @@ function schoolbot_faq( $atts ) {
 	return $output;
 
 }
-
-add_shortcode( 'schoolbot-faq', 'schoolbot_faq' );
 
 
