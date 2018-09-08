@@ -126,3 +126,31 @@ function schoolbot_training_days( $atts ) {
 }
 
 add_shortcode( 'schoolbot-training-days', 'schoolbot_training_days' );
+
+function schoolbot_faq( $atts ) {
+	$atts = shortcode_atts( [], $atts, 'schoolbot-faq' );
+
+	$custom_messages = wp_remote_get( SCHOOLBOT_URL . '/api/v1/custommessages' );
+
+	if (is_wp_error( $custom_messages )) {
+		return "Error fetching frequently asked questions";
+	}
+
+	$custom_messages = json_decode($custom_messages['body'], true);
+
+	$output = "<h3>Frequently asked questions</h3><ul>";
+	foreach ( $custom_messages as $message ) {
+		$output .= '<li>';
+		$output .= '<h4 class="schoolbot-faq-question">' . $message['faq'] . '</h4>';
+		$output .= '<span class="schoolbot-faq-answer">' . $message['response'] . '</span>';
+		$output .= '</li>';
+	}
+	$output .= "</ul>";
+
+	return $output;
+
+}
+
+add_shortcode( 'schoolbot-faq', 'schoolbot_faq' );
+
+
