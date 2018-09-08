@@ -103,3 +103,26 @@ function schoolbot_terms( $atts ) {
 	return $output;
 
 }
+
+function schoolbot_training_days( $atts ) {
+	$atts = shortcode_atts( [], $atts, 'schoolbot-training-days' );
+
+	$training_days = wp_remote_get( SCHOOLBOT_URL . '/api/v1/trainingdays' );
+
+	if (is_wp_error( $training_days )) {
+		return "Error fetching training days";
+	}
+
+	$training_days = json_decode($training_days['body'], true);
+
+	$output = "<h3>Training Days</h3><ul>";
+	foreach ( $training_days as $training_day ) {
+		$output .= "<li>" . date('l, jS F Y', strtotime($training_day['date'])) . "</li>";
+	}
+	$output .= "</ul>";
+
+	return $output;
+
+}
+
+add_shortcode( 'schoolbot-training-days', 'schoolbot_training_days' );
