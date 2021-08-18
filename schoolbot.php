@@ -12,7 +12,8 @@
  * @package         Schoolbot
  */
 
-define('SCHOOLBOT_URL', 'https://yourdomain.schoolbot.co.uk');
+define('SCHOOLBOT_URL', 'https://evenswindon.schoolbot.co.uk');
+//define('SCHOOLBOT_URL', 'http://evenswindon.schoolbot.test');
 
 function schoolbot_day_name( $dayno ) {
 	$schoolbot_days_lookup = [
